@@ -2,7 +2,7 @@
 
 ## ER Diagram
 
-![ER Diagram](docs/images/er-diagram.png)
+![ER Diagram](../docs/images/er-daigram.png)
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## MVC Architecture Diagram
 
-![MVC Architecture](docs/images/mvc.png)
+![MVC Architecture](../docs/images/mvc.png)
 
 ---
 

@@ -2,8 +2,7 @@
 
 ## System Architecture
 
-![Ucab Technical Architecture](docs/images/technical_architecture.png)
-![Technical Architecture](docs/images/technical_architecture.png)
+![Ucab Technical Architecture](../docs/images/technical_architecture.png)
 ---
 
 # 📖 Overview
