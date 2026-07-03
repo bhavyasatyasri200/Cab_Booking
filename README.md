@@ -528,7 +528,7 @@ Admin Authorization Required.
 - Manage Users
 - Manage Cabs
 - Booking Management
-
+All the images are added in Screenshots folder
 ---
 
 # 👨‍💻 Developed Using
