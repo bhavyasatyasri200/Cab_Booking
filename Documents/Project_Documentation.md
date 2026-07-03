@@ -358,8 +358,6 @@ Key UI pages include:
 - Promotional Offers page
 - Admin Cab Management with image upload
 
-> Screenshots can be added here as the project progresses.
-
 ---
 
 ## 10. Testing
