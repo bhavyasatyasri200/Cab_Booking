@@ -388,19 +388,9 @@ The project uses **manual testing** throughout development to validate all featu
 
 ## 11. Screenshots or Demo
 
-> Add screenshots or a live demo link here once the application is deployed.
+> Added Screenshots in Screenshots folder.
 
-**Screens to document:**
-- Home Page
-- User Registration / Login
-- Cab Listing Page
-- Booking Form
-- My Bookings
-- Ride Tracking
-- Offers Page
-- Admin Dashboard
-- Cab Management
-- User Management
+
 
 ---
 
