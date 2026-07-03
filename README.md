@@ -516,7 +516,7 @@ Admin Authorization Required.
 ---
 
 # 📸 Screens
--All the images are added in Screenshots folder
+- All the images are added in Screenshots folder
 - Home
 - User Dashboard
 - Cab Listing
