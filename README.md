@@ -516,7 +516,7 @@ Admin Authorization Required.
 ---
 
 # 📸 Screens
-
+-All the images are added in Screenshots folder
 - Home
 - User Dashboard
 - Cab Listing
@@ -528,7 +528,7 @@ Admin Authorization Required.
 - Manage Users
 - Manage Cabs
 - Booking Management
-All the images are added in Screenshots folder
+
 ---
 
 # 👨‍💻 Developed Using
