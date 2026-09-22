@@ -6,8 +6,6 @@ import Uhome from './pages/Uhome';
 import Cabs from './pages/Cabs';
 import BookCab from './pages/BookCab';
 import MyBookings from './pages/MyBookings';
-import TrackRide from './pages/TrackRide';
-import Offers from './pages/Offers';
 import Alogin from './pages/Alogin';
 import Aregister from './pages/Aregister';
 import Ahome from './pages/Ahome';
@@ -42,8 +40,6 @@ export default function App() {
         <Route path="/cabs" element={<PrivateRoute><Cabs /></PrivateRoute>} />
         <Route path="/bookcab/:id" element={<PrivateRoute><BookCab /></PrivateRoute>} />
         <Route path="/mybookings" element={<PrivateRoute><MyBookings /></PrivateRoute>} />
-        <Route path="/track" element={<PrivateRoute><TrackRide /></PrivateRoute>} />
-        <Route path="/offers" element={<PrivateRoute><Offers /></PrivateRoute>} />
 
         {/* Admin */}
         <Route path="/admin/login" element={<Alogin />} />

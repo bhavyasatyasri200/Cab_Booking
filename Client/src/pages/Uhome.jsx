@@ -50,18 +50,6 @@ export default function Uhome() {
               <span>My Bookings</span>
             </div>
           </Link>
-          <Link to="/track" style={{ textDecoration: 'none' }}>
-            <div className="quick-link">
-              <div className="ql-icon">🗺️</div>
-              <span>Track Ride</span>
-            </div>
-          </Link>
-          <Link to="/offers" style={{ textDecoration: 'none' }}>
-            <div className="quick-link">
-              <div className="ql-icon">🎁</div>
-              <span>Offers</span>
-            </div>
-          </Link>
         </div>
       </div>
     </>
