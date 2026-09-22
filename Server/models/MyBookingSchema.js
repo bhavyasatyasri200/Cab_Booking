@@ -13,6 +13,13 @@ const MyBookingSchema = new mongoose.Schema({
   carname: { type: String },
   carno: { type: String },
   userid: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userName: { type: String },
+  userEmail: { type: String },
+  status: {
+    type: String,
+    enum: ['Pending', 'Confirmed', 'Rejected'],
+    default: 'Pending',
+  },
   bookeddate: {
     type: String,
     default: () => new Date().toLocaleDateString('en-IN'),

@@ -13,6 +13,17 @@ export default function MyBookings() {
       .catch(() => setLoading(false));
   }, []);
 
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'Confirmed':
+        return <span className="badge badge-success">🟢 Confirmed</span>;
+      case 'Rejected':
+        return <span className="badge badge-danger">🔴 Rejected</span>;
+      default:
+        return <span className="badge badge-warning">🟡 Pending Approval</span>;
+    }
+  };
+
   return (
     <>
       <Unav />
@@ -33,15 +44,20 @@ export default function MyBookings() {
           <div className="bookings-grid">
             {bookings.map(b => (
               <div className="booking-card" key={b._id}>
-                <div className="booking-route">
-                  <span>{b.selectedPickupCity}</span>
-                  <span className="arrow">→</span>
-                  <span>{b.selectedDropCity}</span>
+                <div className="booking-route" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <span>{b.selectedPickupCity}</span>
+                    <span className="arrow">→</span>
+                    <span>{b.selectedDropCity}</span>
+                  </div>
+                  <div>
+                    {getStatusBadge(b.status || 'Pending')}
+                  </div>
                 </div>
-                <div>
+                <div style={{ marginTop: 8 }}>
                   <span className="cab-badge">{b.cartype}</span>
                 </div>
-                <div className="booking-meta">
+                <div className="booking-meta" style={{ marginTop: 12 }}>
                   <span>🚗 {b.carname}</span>
                   <span>🔢 {b.carno}</span>
                   <span>📅 {b.pickupdate} at {b.pickuptime}</span>
