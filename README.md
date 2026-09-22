@@ -1,6 +1,6 @@
 # 🚖 Ucab — MERN Stack Cab Booking Application
 
-A full-stack **MERN (MongoDB, Express.js, React.js, Node.js)** cab booking application featuring separate **User** and **Admin** dashboards, JWT authentication, cab management, booking management, simulated live ride tracking, promotional offers, donation support, and an in-cab refreshments store.
+A full-stack **MERN (MongoDB, Express.js, React.js, Node.js)** cab booking application featuring separate **User** and **Admin** dashboards, JWT authentication, cab management, booking approval workflows, and user management.
 
 ---
 
@@ -57,8 +57,6 @@ Cab_Booking/
             ├── Cabs.jsx
             ├── BookCab.jsx
             ├── MyBookings.jsx
-            ├── TrackRide.jsx
-            ├── Offers.jsx
             ├── Alogin.jsx
             ├── Aregister.jsx
             ├── Ahome.jsx
@@ -77,7 +75,7 @@ Cab_Booking/
 ## 1️⃣ Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/bhavyasatyasri200/Cab_Booking.git
 cd Cab_Booking
 ```
 
@@ -103,30 +101,10 @@ npm install
 
 # 🗄️ MongoDB Setup
 
-## Option A – Local MongoDB
-
-1. Install MongoDB Community Server.
-2. Start the MongoDB service.
-3. Configure your `.env` file:
+Configure your `.env` file inside the `Server/` directory:
 
 ```env
-MONGO_URI=mongodb://localhost:27017/ucab
-JWT_SECRET=your_jwt_secret
-PORT=8000
-```
-
----
-
-## Option B – MongoDB Atlas
-
-1. Create a MongoDB Atlas Cluster.
-2. Create a Database User.
-3. Allow Network Access (`0.0.0.0/0`).
-4. Copy the connection string.
-5. Update `.env`:
-
-```env
-MONGO_URI=your_mongodb_atlas_connection_string
+MONGO_URI=your_mongodb_atlas_or_local_connection_string
 JWT_SECRET=your_jwt_secret
 PORT=8000
 ```
@@ -137,10 +115,10 @@ PORT=8000
 
 ## Start Backend
 
-Open a terminal inside the **Server** folder.
+Open a terminal inside the **Server** folder:
 
 ```bash
-npm run dev
+npm start
 ```
 
 Expected Output:
@@ -154,397 +132,89 @@ MongoDB Connected
 
 ## Start Frontend
 
-Open another terminal inside the **Client** folder.
+Open another terminal inside the **Client** folder:
 
 ```bash
 npm run dev
 ```
 
-Visit:
-
-```
-http://localhost:5173
-```
+Visit: `http://localhost:5173`
 
 ---
 
-# 👤 First Time Usage
+# 👤 Application Workflow
 
 ## Admin Flow
 
-1. Open:
-
-```
-http://localhost:5173/admin/register
-```
-
-2. Create an Admin account.
-
-3. Login using:
-
-```
-http://localhost:5173/admin/login
-```
-
-4. Navigate to:
-
-```
-Dashboard → Cabs → Add Cab
-```
-
-5. Add multiple vehicles (Mini, Sedan, SUV).
+1. Register or Login as Admin (`/admin/login`).
+2. Add, edit, or delete cab options (`/admin/cabs`).
+3. View user registrations & manage accounts (`/admin/users`).
+4. **Approve** or **Reject** incoming ride booking requests in real-time (`/admin/bookings`).
 
 ---
 
 ## User Flow
 
-1. Open:
-
-```
-http://localhost:5173/register
-```
-
-2. Create a User account.
-
-3. Login.
-
-4. Browse available cabs.
-
-5. Click **Book Now**.
-
-6. Fill booking details.
-
-7. Confirm booking.
-
-8. Track your ride.
-
-9. Apply offers and order refreshments.
+1. Register or Login as User (`/login`).
+2. Browse available cabs by category (`/cabs`).
+3. Book a ride by filling pickup/drop dates & locations.
+4. Track booking status (`Pending Approval`, `Confirmed`, `Rejected`) under **My Bookings** (`/mybookings`).
 
 ---
 
-# ✨ Features
+# ✨ Core Features
 
-## Authentication
-
-- JWT Authentication
-- Separate User and Admin Login
-- Protected Routes
-- Password Encryption using bcryptjs
-
----
+## Authentication & Security
+- JWT Authentication with protected routes
+- Password Encryption using `bcryptjs`
+- Role-based Access Control (User / Admin)
 
 ## User Features
+- Browse available cabs filtered by vehicle type (Mini, Sedan, SUV)
+- Instant ride booking
+- View booking status (`Pending Approval`, `Confirmed`, `Rejected`)
 
-- User Registration & Login
-- Browse Available Cabs
-- Filter by Vehicle Type
-- Book a Cab
-- View Booking History
-- Simulated Live Ride Tracking
-- Ride Cancellation
-- ETA Updates
-- Promo Code Discounts
-- Go-Green Donations
-- In-Cab Refreshments Store
+## Admin Features
+- Admin Dashboard with system stats
+- **Ride Approval Workflow**: Approve or Reject pending user ride requests
+- **Deleted User Handling**: Preserves historical ride data even if a user account is deleted
+- Full CRUD management for Cabs and Users
+- Car Image Uploads via Multer
 
 ---
 
-## Admin Features
+# 📡 REST API Endpoints
 
-- Admin Registration & Login
-- Dashboard Statistics
-- Manage Users
-- Manage Cabs
-- Upload Car Images
-- Manage Bookings
-- Full CRUD Operations
+### User & Admin Auth
+- `POST /api/users/register` - User Registration
+- `POST /api/users/login` - User Login
+- `POST /api/admin/register` - Admin Registration
+- `POST /api/admin/login` - Admin Login
+
+### Cab Management
+- `GET /api/cars` - Fetch all cabs
+- `POST /api/cars` - Add new cab (Multipart Image upload)
+- `PUT /api/cars/:id` - Update cab details
+- `DELETE /api/cars/:id` - Delete a cab
+
+### Booking Management
+- `POST /api/bookings` - Create a booking (Defaults status to `Pending`)
+- `GET /api/bookings/user` - Fetch logged-in user's bookings
+- `GET /api/bookings/all` - Fetch all bookings (Admin)
+- `PUT /api/bookings/:id/status` - Update booking status (`Confirmed` / `Rejected`) (Admin)
 
 ---
 
 # 🛠️ Tech Stack
 
-## Frontend
-
-- React.js
-- React Router DOM
-- Axios
-- CSS
-
-## Backend
-
-- Node.js
-- Express.js
-
-## Database
-
-- MongoDB
-- Mongoose
-
-## Authentication
-
-- JWT
-- bcryptjs
-
-## File Upload
-
-- Multer
-
----
-
-# 📡 REST API
-
-## User Authentication
-
-### Register User
-
-**POST**
-
-```
-/api/users/register
-```
-
-Request
-
-```json
-{
-  "name": "Sarah Johnson",
-  "email": "sarah@example.com",
-  "password": "securepassword123"
-}
-```
-
----
-
-### Login User
-
-**POST**
-
-```
-/api/users/login
-```
-
-Request
-
-```json
-{
-  "email": "sarah@example.com",
-  "password": "securepassword123"
-}
-```
-
----
-
-### Get User Profile
-
-**GET**
-
-```
-/api/users/profile
-```
-
-Headers
-
-```text
-Authorization: Bearer <token>
-```
-
----
-
-## Admin Authentication
-
-### Register Admin
-
-**POST**
-
-```
-/api/admin/register
-```
-
----
-
-### Login Admin
-
-**POST**
-
-```
-/api/admin/login
-```
-
----
-
-# 🚖 Cab Management (Admin)
-
-## Get All Cabs
-
-**GET**
-
-```
-/api/cars
-```
-
----
-
-## Get Cab by ID
-
-**GET**
-
-```
-/api/cars/:id
-```
-
----
-
-## Add Cab
-
-**POST**
-
-```
-/api/cars
-```
-
-Headers
-
-```text
-Content-Type: multipart/form-data
-```
-
-Form Data
-
-| Field | Type |
-|---------|------|
-| drivername | Text |
-| carname | Text |
-| cartype | Mini / Sedan / SUV |
-| price | Number |
-| carno | Text |
-| carImage | File (Optional) |
-
----
-
-## Update Cab
-
-**PUT**
-
-```
-/api/cars/:id
-```
-
----
-
-## Delete Cab
-
-**DELETE**
-
-```
-/api/cars/:id
-```
-
----
-
-# 📅 Booking APIs
-
-## Book a Cab
-
-**POST**
-
-```
-/api/bookings
-```
-
-Headers
-
-```text
-Authorization: Bearer <token>
-```
-
-Request
-
-```json
-{
-  "selectedPickupCity": "Mumbai",
-  "selectedPickupState": "Maharashtra",
-  "selectedDropCity": "Pune",
-  "pickupdate": "2026-07-05",
-  "pickuptime": "08:30",
-  "dropdate": "2026-07-05",
-  "droptime": "11:30",
-  "fare": "12",
-  "cartype": "Sedan",
-  "carname": "Honda City",
-  "carno": "MH12AB1234"
-}
-```
-
----
-
-## User Booking History
-
-**GET**
-
-```
-/api/bookings/user
-```
-
-Headers
-
-```text
-Authorization: Bearer <token>
-```
-
----
-
-## Admin Booking List
-
-**GET**
-
-```
-/api/bookings/all
-```
-
-Admin Authorization Required.
-
----
-
-# 🔒 Security
-
-- JWT Token Authentication
-- Password Hashing using bcryptjs
-- Protected API Routes
-- Role-Based Access Control
-- Secure Image Upload Handling
-
----
-
-# 📸 Screens
-- All the images are added in Screenshots folder
-- Home
-- User Dashboard
-- Cab Listing
-- Booking Page
-- My Bookings
-- Ride Tracking
-- Offers
-- Admin Dashboard
-- Manage Users
-- Manage Cabs
-- Booking Management
-
----
-
-# 👨‍💻 Developed Using
-
-- React.js
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- JWT
-- bcryptjs
-- Multer
-- Axios
+- **Frontend**: React.js, React Router DOM, Axios, Vanilla CSS
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB, Mongoose
+- **Authentication**: JSON Web Tokens (JWT), bcryptjs
+- **File Storage**: Multer
 
 ---
 
 # 📄 License
 
-This project is developed for educational and learning purposes.
+This project is open-source and developed for educational purposes.
