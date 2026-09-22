@@ -31,10 +31,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# ========================
-# Uploaded Files (Server)
-# ========================
-Server/uploads/
+
 
 # ========================
 # OS & Editor Files
