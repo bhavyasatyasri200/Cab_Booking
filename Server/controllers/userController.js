@@ -6,25 +6,34 @@ const { sendOTPEmail } = require('../utils/mailer');
 // Helper to generate 6-digit numeric OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// Register User (Immediate verification & login)
+// Register User (Immediate verification & login, supports re-registration if unverified)
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const existing = await User.findOne({ email });
 
     if (existing) {
-      return res.status(400).json({ message: 'User with this email already exists. Please log in.' });
+      if (existing.isVerified) {
+        return res.status(400).json({ message: 'Email already registered. Please log in.' });
+      }
+      // User exists but was never verified (abandoned registration) - just update and verify
+      existing.name = name;
+      existing.password = await bcrypt.hash(password, 8);
+      existing.isVerified = true;
+      existing.otp = undefined;
+      existing.otpExpires = undefined;
+      await existing.save();
+      const token = jwt.sign({ id: existing._id, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '7d' });
+      return res.status(200).json({
+        message: 'Registration successful!',
+        token,
+        user: { _id: existing._id, name: existing.name, email: existing.email },
+        requiresOtp: false,
+      });
     }
 
     const hashed = await bcrypt.hash(password, 8);
-    const user = await User.create({
-      name,
-      email,
-      password: hashed,
-      isVerified: true,
-    });
-
-    // Generate token for instant login
+    const user = await User.create({ name, email, password: hashed, isVerified: true });
     const token = jwt.sign({ id: user._id, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({
