@@ -2,29 +2,27 @@ const nodemailer = require('nodemailer');
 const dns = require('dns');
 
 const sendOTPEmail = async (email, otp) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.log(`[DEV MODE] EMAIL_USER not configured. Mock OTP for ${email}: ${otp}`);
+  const user = process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '';
+  const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s+/g, '') : '';
+
+  if (!user || !pass) {
+    console.log(`[DEV MODE] EMAIL_USER/EMAIL_PASS not configured. Mock OTP for ${email}: ${otp}`);
     return;
   }
 
   try {
-    const cleanPass = process.env.EMAIL_PASS.replace(/\s+/g, '');
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: cleanPass,
-      },
-      lookup: (hostname, options, callback) => {
-        dns.lookup(hostname, { family: 4 }, callback);
-      },
-      connectionTimeout: 5000,
-      greetingTimeout: 5000,
-      socketTimeout: 5000,
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true, // SSL
+      auth: { user, pass },
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
+      socketTimeout: 10000,
     });
 
     const mailOptions = {
-      from: `"Ucab Security" <${process.env.EMAIL_USER}>`,
+      from: `"Ucab Security" <${user}>`,
       to: email,
       subject: '🚖 Ucab - Verify your Email Address (OTP)',
       html: `
@@ -39,8 +37,8 @@ const sendOTPEmail = async (email, otp) => {
       `,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`OTP email sent successfully to ${email}`);
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`OTP email sent successfully to ${email}. Message ID: ${info.messageId}`);
   } catch (err) {
     console.error(`Failed to send OTP email to ${email}:`, err.message);
   }
