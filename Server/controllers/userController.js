@@ -26,7 +26,7 @@ const registerUser = async (req, res) => {
       existing.otpExpires = otpExpires;
       await existing.save();
 
-      await sendOTPEmail(email, otp);
+      sendOTPEmail(email, otp).catch(err => console.error('Async email error:', err));
       return res.status(200).json({
         message: 'Account pending verification. A new OTP has been sent to your email.',
         email,
@@ -47,7 +47,7 @@ const registerUser = async (req, res) => {
       otpExpires,
     });
 
-    await sendOTPEmail(email, otp);
+    sendOTPEmail(email, otp).catch(err => console.error('Async email error:', err));
 
     res.status(201).json({
       message: 'Registration successful! Please check your email for the verification OTP code.',
@@ -103,7 +103,7 @@ const resendOTP = async (req, res) => {
     user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
 
-    await sendOTPEmail(email, otp);
+    sendOTPEmail(email, otp).catch(err => console.error('Async email error:', err));
     res.json({ message: 'A new OTP has been sent to your email address.' });
   } catch (err) {
     res.status(500).json({ message: err.message });
