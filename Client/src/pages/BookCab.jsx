@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Unav from '../components/Unav';
 
+import API_BASE_URL from '../config';
+
 export default function BookCab() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ export default function BookCab() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/cars/${id}`).then(r => setCar(r.data));
+    axios.get(`${API_BASE_URL}/api/cars/${id}`).then(r => setCar(r.data));
   }, [id]);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,7 +29,7 @@ export default function BookCab() {
     setLoading(true); setError('');
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:8000/api/bookings', {
+      await axios.post(`${API_BASE_URL}/api/bookings`, {
         ...form,
         fare: car.price,
         cartype: car.cartype,

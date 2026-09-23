@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import API_BASE_URL from '../config';
+
 export default function Alogin() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
@@ -11,7 +13,7 @@ export default function Alogin() {
   const handleSubmit = async e => {
     e.preventDefault(); setError(''); setLoading(true);
     try {
-      const { data } = await axios.post('http://localhost:8000/api/admin/login', form);
+      const { data } = await axios.post(`${API_BASE_URL}/api/admin/login`, form);
       localStorage.setItem('adminToken', data.token);
       localStorage.setItem('admin', JSON.stringify(data.admin));
       navigate('/admin/home');

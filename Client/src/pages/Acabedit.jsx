@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Anav from '../components/Anav';
 
+import API_BASE_URL from '../config';
+
 export default function Acabedit() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,7 +14,7 @@ export default function Acabedit() {
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/cars/${id}`)
+    axios.get(`${API_BASE_URL}/api/cars/${id}`)
       .then(r => setForm({ drivername: r.data.drivername, carname: r.data.carname, cartype: r.data.cartype, price: r.data.price, carno: r.data.carno }));
   }, [id]);
 
@@ -22,7 +24,7 @@ export default function Acabedit() {
     Object.entries(form).forEach(([k, v]) => fd.append(k, v));
     if (image) fd.append('carImage', image);
     const token = localStorage.getItem('adminToken');
-    await axios.put(`http://localhost:8000/api/cars/${id}`, fd, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } });
+    await axios.put(`${API_BASE_URL}/api/cars/${id}`, fd, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } });
     setSuccess('Cab updated!');
     setTimeout(() => navigate('/admin/cabs'), 1500);
     setLoading(false);

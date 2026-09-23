@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Anav from '../components/Anav';
+import API_BASE_URL from '../config';
 
 export default function Bookings() {
   const [bookings, setBookings] = useState([]);
@@ -10,7 +11,7 @@ export default function Bookings() {
 
   const fetchBookings = () => {
     const token = localStorage.getItem('adminToken');
-    axios.get('http://localhost:8000/api/bookings/all', { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API_BASE_URL}/api/bookings/all`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => { setBookings(r.data); setLoading(false); })
       .catch(() => setLoading(false));
   };
@@ -22,7 +23,7 @@ export default function Bookings() {
   const handleStatusChange = (id, newStatus) => {
     const token = localStorage.getItem('adminToken');
     setUpdatingId(id);
-    axios.put(`http://localhost:8000/api/bookings/${id}/status`, { status: newStatus }, {
+    axios.put(`${API_BASE_URL}/api/bookings/${id}/status`, { status: newStatus }, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -39,7 +40,7 @@ export default function Bookings() {
     if (!window.confirm('Are you sure you want to delete this booking entry?')) return;
     const token = localStorage.getItem('adminToken');
     setUpdatingId(id);
-    axios.delete(`http://localhost:8000/api/bookings/${id}`, {
+    axios.delete(`${API_BASE_URL}/api/bookings/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(() => {
@@ -56,7 +57,7 @@ export default function Bookings() {
     if (!window.confirm('Clear all bookings belonging to deleted users?')) return;
     const token = localStorage.getItem('adminToken');
     setCleaning(true);
-    axios.delete('http://localhost:8000/api/bookings/orphaned', {
+    axios.delete(`${API_BASE_URL}/api/bookings/orphaned`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {

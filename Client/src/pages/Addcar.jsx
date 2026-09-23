@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Anav from '../components/Anav';
 
+import API_BASE_URL from '../config';
+
 export default function Addcar() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ drivername: '', carname: '', cartype: 'Mini', price: '', carno: '' });
@@ -18,7 +20,7 @@ export default function Addcar() {
       Object.entries(form).forEach(([k, v]) => fd.append(k, v));
       if (image) fd.append('carImage', image);
       const token = localStorage.getItem('adminToken');
-      await axios.post('http://localhost:8000/api/cars', fd, {
+      await axios.post(`${API_BASE_URL}/api/cars`, fd, {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
       });
       setSuccess('Cab added successfully! 🎉');

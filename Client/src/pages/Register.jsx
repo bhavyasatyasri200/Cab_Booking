@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import API_BASE_URL from '../config';
+
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
@@ -14,7 +16,7 @@ export default function Register() {
     e.preventDefault();
     setError(''); setLoading(true);
     try {
-      const { data } = await axios.post('http://localhost:8000/api/users/register', form);
+      const { data } = await axios.post(`${API_BASE_URL}/api/users/register`, form);
       if (data.requiresOtp) {
         navigate('/verify-otp', { state: { email: data.email } });
       } else {

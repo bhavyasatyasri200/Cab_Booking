@@ -3,13 +3,15 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Unav from '../components/Unav';
 
+import API_BASE_URL from '../config';
+
 export default function Cabs() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/cars')
+    axios.get(`${API_BASE_URL}/api/cars`)
       .then(r => { setCars(r.data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
@@ -46,7 +48,7 @@ export default function Cabs() {
             {filtered.map(car => (
               <div className="cab-card" key={car._id}>
                 {car.carImage ? (
-                  <img src={`http://localhost:8000/uploads/${car.carImage}`} alt={car.carname} />
+                  <img src={`${API_BASE_URL}/uploads/${car.carImage}`} alt={car.carname} />
                 ) : (
                   <div className="img-placeholder">🚗</div>
                 )}

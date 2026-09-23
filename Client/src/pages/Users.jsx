@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Anav from '../components/Anav';
 
+import API_BASE_URL from '../config';
+
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +12,7 @@ export default function Users() {
 
   const fetchUsers = () => {
     const token = localStorage.getItem('adminToken');
-    axios.get('http://localhost:8000/api/users/all', { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API_BASE_URL}/api/users/all`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => { setUsers(r.data); setLoading(false); })
       .catch(() => setLoading(false));
   };
@@ -20,7 +22,7 @@ export default function Users() {
   const deleteUser = async id => {
     if (!window.confirm('Delete this user?')) return;
     const token = localStorage.getItem('adminToken');
-    await axios.delete(`http://localhost:8000/api/users/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+    await axios.delete(`${API_BASE_URL}/api/users/${id}`, { headers: { Authorization: `Bearer ${token}` } });
     fetchUsers();
   };
 

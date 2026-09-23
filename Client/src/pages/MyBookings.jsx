@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Unav from '../components/Unav';
+import API_BASE_URL from '../config';
 
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
@@ -8,7 +9,7 @@ export default function MyBookings() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios.get('http://localhost:8000/api/bookings/user', { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API_BASE_URL}/api/bookings/user`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => { setBookings(r.data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);

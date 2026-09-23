@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import API_BASE_URL from '../config';
+
 export default function Aregister() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
@@ -11,7 +13,7 @@ export default function Aregister() {
   const handleSubmit = async e => {
     e.preventDefault(); setError(''); setLoading(true);
     try {
-      const { data } = await axios.post('http://localhost:8000/api/admin/register', form);
+      const { data } = await axios.post(`${API_BASE_URL}/api/admin/register`, form);
       localStorage.setItem('adminToken', data.token);
       localStorage.setItem('admin', JSON.stringify(data.admin));
       navigate('/admin/home');

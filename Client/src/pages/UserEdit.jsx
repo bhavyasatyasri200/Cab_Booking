@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Anav from '../components/Anav';
 
+import API_BASE_URL from '../config';
+
 export default function UserEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,7 +14,7 @@ export default function UserEdit() {
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
-    axios.get('http://localhost:8000/api/users/all', { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API_BASE_URL}/api/users/all`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => {
         const user = r.data.find(u => u._id === id);
         if (user) setForm({ name: user.name, email: user.email });
@@ -22,7 +24,7 @@ export default function UserEdit() {
   const handleSubmit = async e => {
     e.preventDefault(); setLoading(true);
     const token = localStorage.getItem('adminToken');
-    await axios.put(`http://localhost:8000/api/users/${id}`, form, { headers: { Authorization: `Bearer ${token}` } });
+    await axios.put(`${API_BASE_URL}/api/users/${id}`, form, { headers: { Authorization: `Bearer ${token}` } });
     setSuccess('User updated!');
     setTimeout(() => navigate('/admin/users'), 1500);
     setLoading(false);

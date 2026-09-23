@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Anav from '../components/Anav';
 
+import API_BASE_URL from '../config';
+
 export default function Acabs() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchCars = () => {
-    axios.get('http://localhost:8000/api/cars')
+    axios.get(`${API_BASE_URL}/api/cars`)
       .then(r => { setCars(r.data); setLoading(false); })
       .catch(() => setLoading(false));
   };
@@ -19,7 +21,7 @@ export default function Acabs() {
   const deleteCar = async id => {
     if (!window.confirm('Delete this cab?')) return;
     const token = localStorage.getItem('adminToken');
-    await axios.delete(`http://localhost:8000/api/cars/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+    await axios.delete(`${API_BASE_URL}/api/cars/${id}`, { headers: { Authorization: `Bearer ${token}` } });
     fetchCars();
   };
 

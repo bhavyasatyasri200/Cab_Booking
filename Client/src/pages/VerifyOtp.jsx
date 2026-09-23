@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
+import API_BASE_URL from '../config';
+
 export default function VerifyOtp() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ export default function VerifyOtp() {
     e.preventDefault();
     setError(''); setMessage(''); setLoading(true);
     try {
-      const { data } = await axios.post('http://localhost:8000/api/users/verify-otp', { email, otp });
+      const { data } = await axios.post(`${API_BASE_URL}/api/users/verify-otp`, { email, otp });
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setMessage('Verification successful! Redirecting...');
@@ -32,7 +34,7 @@ export default function VerifyOtp() {
   const handleResend = async () => {
     setError(''); setMessage(''); setResending(true);
     try {
-      const { data } = await axios.post('http://localhost:8000/api/users/resend-otp', { email });
+      const { data } = await axios.post(`${API_BASE_URL}/api/users/resend-otp`, { email });
       setMessage(data.message || 'OTP resent to your email.');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to resend OTP');

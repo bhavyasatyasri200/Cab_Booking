@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Anav from '../components/Anav';
 
+import API_BASE_URL from '../config';
+
 export default function Ahome() {
   const [counts, setCounts] = useState({ users: 0, bookings: 0, cars: 0 });
 
@@ -10,9 +12,9 @@ export default function Ahome() {
     const token = localStorage.getItem('adminToken');
     const h = { headers: { Authorization: `Bearer ${token}` } };
     Promise.all([
-      axios.get('http://localhost:8000/api/users/all', h),
-      axios.get('http://localhost:8000/api/bookings/all', h),
-      axios.get('http://localhost:8000/api/cars'),
+      axios.get(`${API_BASE_URL}/api/users/all`, h),
+      axios.get(`${API_BASE_URL}/api/bookings/all`, h),
+      axios.get(`${API_BASE_URL}/api/cars`),
     ]).then(([u, b, c]) => setCounts({ users: u.data.length, bookings: b.data.length, cars: c.data.length }))
       .catch(() => {});
   }, []);
