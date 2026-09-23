@@ -16,7 +16,7 @@ export default function Register() {
     e.preventDefault();
     setError(''); setLoading(true);
     try {
-      const { data } = await axios.post(`${API_BASE_URL}/api/users/register`, form, { timeout: 15000 });
+      const { data } = await axios.post(`${API_BASE_URL}/api/users/register`, form, { timeout: 45000 });
       if (data.requiresOtp) {
         navigate('/verify-otp', { state: { email: data.email } });
       } else {
@@ -26,7 +26,7 @@ export default function Register() {
       }
     } catch (err) {
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-        setError('Server is waking up (Render free tier). Please wait 10 seconds and click Create Account again!');
+        setError('Server cold start took longer than expected. Please click Create Account once more now that the server is active.');
       } else {
         setError(err.response?.data?.message || 'Registration failed');
       }
