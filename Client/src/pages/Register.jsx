@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -8,7 +8,15 @@ export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [wakingUp, setWakingUp] = useState(true);
   const navigate = useNavigate();
+
+  // Ping server on page load to wake Render from sleep
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/`, { timeout: 60000 })
+      .catch(() => {})
+      .finally(() => setWakingUp(false));
+  }, []);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -26,7 +34,7 @@ export default function Register() {
       }
     } catch (err) {
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-        setError('Server cold start took longer than expected. Please click Create Account once more now that the server is active.');
+        setError('Connection timed out. Please try again.');
       } else {
         setError(err.response?.data?.message || 'Registration failed');
       }
@@ -39,6 +47,11 @@ export default function Register() {
         <div className="auth-logo">🚖 Ucab</div>
         <h2>Create account</h2>
         <p>Join Ucab and start booking rides today</p>
+        {wakingUp && (
+          <div className="alert" style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 12, fontSize: 13, textAlign: 'center' }}>
+            ⏳ Connecting to server, please wait...
+          </div>
+        )}
         {error && <div className="alert alert-error">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -53,8 +66,8 @@ export default function Register() {
             <label>Password</label>
             <input type="password" name="password" placeholder="Min. 6 characters" value={form.password} onChange={handleChange} required minLength={6} />
           </div>
-          <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '13px' }} disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create Account'}
+          <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '13px' }} disabled={loading || wakingUp}>
+            {wakingUp ? 'Connecting...' : loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
         <div className="auth-link">
