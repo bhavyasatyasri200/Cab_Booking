@@ -6,7 +6,7 @@ const { sendOTPEmail } = require('../utils/mailer');
 // Helper to generate 6-digit numeric OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// Register User (Immediate verification & login, supports re-registration if unverified)
+// Register User (Sends OTP via non-blocking async email)
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -16,31 +16,40 @@ const registerUser = async (req, res) => {
       if (existing.isVerified) {
         return res.status(400).json({ message: 'Email already registered. Please log in.' });
       }
-      // User exists but was never verified (abandoned registration) - just update and verify
+      // User exists but was never verified - update details & send new OTP
+      const otp = generateOTP();
       existing.name = name;
       existing.password = await bcrypt.hash(password, 8);
-      existing.isVerified = true;
-      existing.otp = undefined;
-      existing.otpExpires = undefined;
+      existing.isVerified = false;
+      existing.otp = otp;
+      existing.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
       await existing.save();
-      const token = jwt.sign({ id: existing._id, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+      sendOTPEmail(email, otp).catch(err => console.error('Async email error:', err));
       return res.status(200).json({
-        message: 'Registration successful!',
-        token,
-        user: { _id: existing._id, name: existing.name, email: existing.email },
-        requiresOtp: false,
+        message: 'OTP sent to your email address.',
+        requiresOtp: true,
+        email: existing.email,
       });
     }
 
+    const otp = generateOTP();
     const hashed = await bcrypt.hash(password, 8);
-    const user = await User.create({ name, email, password: hashed, isVerified: true });
-    const token = jwt.sign({ id: user._id, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const user = await User.create({
+      name,
+      email,
+      password: hashed,
+      isVerified: false,
+      otp,
+      otpExpires: new Date(Date.now() + 10 * 60 * 1000),
+    });
+
+    sendOTPEmail(email, otp).catch(err => console.error('Async email error:', err));
 
     res.status(201).json({
-      message: 'Registration successful!',
-      token,
-      user: { _id: user._id, name: user.name, email: user.email },
-      requiresOtp: false,
+      message: 'OTP sent to your email address.',
+      requiresOtp: true,
+      email: user.email,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

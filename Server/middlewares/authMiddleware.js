@@ -17,7 +17,9 @@ const authAdmin = (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'No token, access denied' });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.role !== 'admin') return res.status(403).json({ message: 'Admin access only' });
+    if (decoded.role !== 'admin' || (decoded.email && decoded.email.toLowerCase() !== 'karribhavyasatyasri@gmail.com')) {
+      return res.status(403).json({ message: 'Admin access denied.' });
+    }
     req.admin = decoded;
     next();
   } catch (err) {

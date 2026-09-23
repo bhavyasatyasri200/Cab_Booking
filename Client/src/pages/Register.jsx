@@ -6,12 +6,11 @@ import API_BASE_URL from '../config';
 
 async function registerWithRetry(form) {
   try {
-    return await axios.post(`${API_BASE_URL}/api/users/register`, form, { timeout: 60000 });
+    return await axios.post(`${API_BASE_URL}/api/users/register`, form, { timeout: 15000 });
   } catch (err) {
     if (err.code === 'ECONNABORTED' || !err.response) {
-      // Server was cold starting - wait 2 seconds then retry once
-      await new Promise(r => setTimeout(r, 2000));
-      return await axios.post(`${API_BASE_URL}/api/users/register`, form, { timeout: 60000 });
+      // Retry once in case of temporary network glitch or server cold start
+      return await axios.post(`${API_BASE_URL}/api/users/register`, form, { timeout: 15000 });
     }
     throw err;
   }
@@ -35,11 +34,15 @@ export default function Register() {
     e.preventDefault();
     setError(''); setStatus(''); setLoading(true);
     try {
-      setStatus('Creating your account...');
+      setStatus('Sending OTP code...');
       const { data } = await registerWithRetry(form);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/uhome');
+      if (data.requiresOtp) {
+        navigate('/verify-otp', { state: { email: data.email || form.email } });
+      } else {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/uhome');
+      }
     } catch (err) {
       setStatus('');
       setError(err.response?.data?.message || 'Registration failed. Please try again.');

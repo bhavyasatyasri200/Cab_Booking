@@ -358,6 +358,8 @@ Key UI pages include:
 - Promotional Offers page
 - Admin Cab Management with image upload
 
+> Screenshots can be added here as the project progresses.
+
 ---
 
 ## 10. Testing
@@ -386,9 +388,18 @@ The project uses **manual testing** throughout development to validate all featu
 
 ## 11. Screenshots or Demo
 
-> Added Screenshots in Screenshots folder.
-
-
+> All the images are added in Screenshots folder
+**Screens to document:**
+- Home Page
+- User Registration / Login
+- Cab Listing Page
+- Booking Form
+- My Bookings
+- Ride Tracking
+- Offers Page
+- Admin Dashboard
+- Cab Management
+- User Management
 
 ---
 
