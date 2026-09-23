@@ -75,4 +75,43 @@ const updateBookingStatus = async (req, res) => {
   }
 };
 
-module.exports = { bookCab, getUserBookings, getAllBookings, updateBookingStatus };
+// Delete single booking (admin)
+const deleteBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await MyBooking.findByIdAndDelete(id);
+    res.json({ message: 'Booking deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Delete all bookings from deleted users (admin)
+const deleteOrphanedBookings = async (req, res) => {
+  try {
+    // Find all valid user IDs
+    const existingUsers = await User.find().select('_id');
+    const validUserIds = existingUsers.map(u => u._id);
+
+    // Delete bookings where userid is not in validUserIds OR userid is null
+    const result = await MyBooking.deleteMany({
+      $or: [
+        { userid: { $nin: validUserIds } },
+        { userid: null }
+      ]
+    });
+
+    res.json({ message: `${result.deletedCount} deleted user bookings removed.` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = {
+  bookCab,
+  getUserBookings,
+  getAllBookings,
+  updateBookingStatus,
+  deleteBooking,
+  deleteOrphanedBookings,
+};

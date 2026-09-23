@@ -19,7 +19,11 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(data.user));
       navigate('/uhome');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      if (err.response?.data?.requiresOtp) {
+        navigate('/verify-otp', { state: { email: err.response.data.email } });
+      } else {
+        setError(err.response?.data?.message || 'Login failed');
+      }
     } finally { setLoading(false); }
   };
 

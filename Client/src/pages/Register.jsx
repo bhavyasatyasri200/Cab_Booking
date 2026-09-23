@@ -15,9 +15,13 @@ export default function Register() {
     setError(''); setLoading(true);
     try {
       const { data } = await axios.post('http://localhost:8000/api/users/register', form);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/uhome');
+      if (data.requiresOtp) {
+        navigate('/verify-otp', { state: { email: data.email } });
+      } else {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/uhome');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
     } finally { setLoading(false); }
