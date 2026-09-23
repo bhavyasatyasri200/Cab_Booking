@@ -4,40 +4,45 @@ import axios from 'axios';
 
 import API_BASE_URL from '../config';
 
+async function registerWithRetry(form) {
+  try {
+    return await axios.post(`${API_BASE_URL}/api/users/register`, form, { timeout: 60000 });
+  } catch (err) {
+    if (err.code === 'ECONNABORTED' || !err.response) {
+      // Server was cold starting - wait 2 seconds then retry once
+      await new Promise(r => setTimeout(r, 2000));
+      return await axios.post(`${API_BASE_URL}/api/users/register`, form, { timeout: 60000 });
+    }
+    throw err;
+  }
+}
+
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [wakingUp, setWakingUp] = useState(true);
+  const [status, setStatus] = useState('');
   const navigate = useNavigate();
 
-  // Ping server on page load to wake Render from sleep
+  // Silently ping server on page load to start warming it up
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/`, { timeout: 60000 })
-      .catch(() => {})
-      .finally(() => setWakingUp(false));
+    axios.get(`${API_BASE_URL}/`, { timeout: 60000 }).catch(() => {});
   }, []);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setError(''); setLoading(true);
+    setError(''); setStatus(''); setLoading(true);
     try {
-      const { data } = await axios.post(`${API_BASE_URL}/api/users/register`, form, { timeout: 45000 });
-      if (data.requiresOtp) {
-        navigate('/verify-otp', { state: { email: data.email } });
-      } else {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/uhome');
-      }
+      setStatus('Creating your account...');
+      const { data } = await registerWithRetry(form);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      navigate('/uhome');
     } catch (err) {
-      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-        setError('Connection timed out. Please try again.');
-      } else {
-        setError(err.response?.data?.message || 'Registration failed');
-      }
+      setStatus('');
+      setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally { setLoading(false); }
   };
 
@@ -47,9 +52,9 @@ export default function Register() {
         <div className="auth-logo">🚖 Ucab</div>
         <h2>Create account</h2>
         <p>Join Ucab and start booking rides today</p>
-        {wakingUp && (
+        {status && (
           <div className="alert" style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: '10px 14px', marginBottom: 12, fontSize: 13, textAlign: 'center' }}>
-            ⏳ Connecting to server, please wait...
+            ⏳ {status}
           </div>
         )}
         {error && <div className="alert alert-error">{error}</div>}
@@ -66,8 +71,8 @@ export default function Register() {
             <label>Password</label>
             <input type="password" name="password" placeholder="Min. 6 characters" value={form.password} onChange={handleChange} required minLength={6} />
           </div>
-          <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '13px' }} disabled={loading || wakingUp}>
-            {wakingUp ? 'Connecting...' : loading ? 'Creating Account...' : 'Create Account'}
+          <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '13px' }} disabled={loading}>
+            {loading ? 'Please wait...' : 'Create Account'}
           </button>
         </form>
         <div className="auth-link">
