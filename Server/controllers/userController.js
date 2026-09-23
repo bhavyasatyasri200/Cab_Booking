@@ -21,7 +21,7 @@ const registerUser = async (req, res) => {
       const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
 
       existing.name = name;
-      existing.password = await bcrypt.hash(password, 10);
+      existing.password = await bcrypt.hash(password, 8);
       existing.otp = otp;
       existing.otpExpires = otpExpires;
       await existing.save();
@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(password, 8);
     const otp = generateOTP();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
