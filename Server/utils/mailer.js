@@ -1,20 +1,18 @@
 const nodemailer = require('nodemailer');
+const dns = require('dns');
 
 const sendOTPEmail = async (email, otp) => {
   // If email credentials are provided in .env, send actual email asynchronously
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     try {
       const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, // use SSL port 465 for reliable cloud delivery
-        family: 4, // Force IPv4 to prevent ENETUNREACH errors on cloud hosts like Render
+        service: 'gmail',
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
         },
-        tls: {
-          rejectUnauthorized: false,
+        lookup: (hostname, options, callback) => {
+          dns.lookup(hostname, { family: 4 }, callback);
         },
         connectionTimeout: 10000,
         greetingTimeout: 10000,
